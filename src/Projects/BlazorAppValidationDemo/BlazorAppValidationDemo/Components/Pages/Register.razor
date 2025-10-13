@@ -1,0 +1,81 @@
+﻿@page "/register"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<PageTitle>Register</PageTitle>
+
+<h2 class="text-primary">User Registration</h2>
+
+<EditForm Model="@registerModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Name:</label>
+        <InputText class="form-control" @bind-Value="registerModel.Name" />
+        <ValidationMessage For="@(() => registerModel.Name)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <InputText class="form-control" @bind-Value="registerModel.Email" />
+        <ValidationMessage For="@(() => registerModel.Email)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Password:</label>
+        <InputText type="password" class="form-control" @bind-Value="registerModel.Password" />
+        <ValidationMessage For="@(() => registerModel.Password)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Confirm Password:</label>
+        <InputText type="password" class="form-control" @bind-Value="registerModel.ConfirmPassword" />
+        <ValidationMessage For="@(() => registerModel.ConfirmPassword)" />
+    </div>
+
+
+    <div class="mb-3">
+        <label>DOB:</label>
+        <InputDate class="form-control" @bind-Value="registerModel.DateOfBirth" />
+        <ValidationMessage For="@(() => registerModel.DateOfBirth)" />
+    </div>
+
+
+    <button type="submit" class="btn btn-success" disabled="@(!formIsValid)">Register</button>
+</EditForm>
+
+<hr />
+<button class="btn btn-warning" @onclick="TriggerDotNetFromJS">Trigger .NET from JS</button>
+
+@code {
+    private RegisterModel registerModel = new();
+    private bool formIsValid => ValidateModel();
+
+    private bool ValidateModel()
+    {
+        // quick local check for button enable/disable
+        return !string.IsNullOrWhiteSpace(registerModel.Name)
+            && !string.IsNullOrWhiteSpace(registerModel.Email)
+            && !string.IsNullOrWhiteSpace(registerModel.Password)
+            && (DateTime.Now.Year - registerModel.DateOfBirth.Year >= 18);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await JS.InvokeVoidAsync("interopFunctions.logToConsole", $"User Registered: {registerModel.Email}");
+        await JS.InvokeVoidAsync("interopFunctions.showAlert", "Registration Successful!");
+    }
+
+    [JSInvokable]
+    public async void FromJavaScript()
+    {
+        Console.WriteLine("JavaScript called a .NET method!");
+        await JS.InvokeVoidAsync("interopFunctions.showAlert", "JavaScript called a .NET method!");
+    }
+
+    private async Task TriggerDotNetFromJS()
+    {
+        await JS.InvokeVoidAsync("interopFunctions.triggerDotNet", DotNetObjectReference.Create(this));
+    }
+}
