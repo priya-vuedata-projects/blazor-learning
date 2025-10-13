@@ -10,8 +10,8 @@ Each day includes structured learning, a coding deliverable, and a GitHub commit
 | Day | Focus Area | Deliverable | Status |
 |-----|-------------|-------------|--------|
 | 0 | Pre-work setup | Environment ready, GitHub repo created | ✅ |
-| 1 | Blazor basics & project setup | Scaffold first Blazor app | ⬜ |
-| 2 | Components & routing | UserCard + navigation demo | ⬜ |
+| 1 | Blazor basics & project setup | Scaffold first Blazor app | ✅ |
+| 2 | Components & routing | UserCard + navigation demo | ✅ |
 | 3 | Forms & validation | Registration form + JS interop | ⬜ |
 | 4 | Razor Class Library | Shared components project | ⬜ |
 | 5 | MudBlazor UI | Themed UI using MudBlazor | ⬜ |
