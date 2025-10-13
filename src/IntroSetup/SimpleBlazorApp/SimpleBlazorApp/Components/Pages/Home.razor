@@ -1,7 +1,39 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@using System.Timers
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Hello Blazor Portal</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1 class="text-primary">Welcome to Hello Blazor Portal</h1>
 
-Welcome to your new app.
+<p>Blazor Web App!</p>
+
+<hr />
+
+<h3>Current Time</h3>
+<p>@currentTime.ToString("hh:mm:ss tt")</p>
+
+<button class="btn btn-primary" @onclick="UpdateTime">Refresh Time</button>
+
+<hr />
+
+<h3>Counter Demo</h3>
+<p>Current count: @count</p>
+<button class="btn btn-success" @onclick="IncrementCount">Increment</button>
+
+<hr />
+
+@code {
+    private int count = 0;
+    private DateTime currentTime = DateTime.Now;
+
+    private void IncrementCount()
+    {
+        count++;
+    }
+
+    private void UpdateTime()
+    {
+        currentTime = DateTime.Now;
+    }
+}

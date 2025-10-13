@@ -1,0 +1,41 @@
+﻿@page "/users"
+@rendermode InteractiveServer
+
+<PageTitle>Users</PageTitle>
+
+<h2>User Directory</h2>
+
+<input class="form-control mb-3" placeholder="Search users..." @bind="searchText" />
+
+@if (filteredUsers.Count == 0)
+{
+    <p>No users found.</p>
+}
+else
+{
+    @foreach (var user in filteredUsers)
+    {
+        <UserCard User="user" OnViewDetails="NavigateToDetails" />
+    }
+}
+
+@code {
+    private List<User> users = new()
+    {
+        new() { Id = 1, Name = "Priya M", Email = "priya@example.com", Role = "Admin" },
+        new() { Id = 2, Name = "Rahul N", Email = "rahul@example.com", Role = "Editor" },
+        new() { Id = 3, Name = "Ananya K", Email = "ananya@example.com", Role = "Viewer" }
+    };
+
+    private string searchText = string.Empty;
+    private List<User> filteredUsers => string.IsNullOrWhiteSpace(searchText)
+        ? users
+        : users.Where(u => u.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    private void NavigateToDetails(int userId)
+    {
+        Navigation.NavigateTo($"/userdetails/{userId}");
+    }
+
+    [Inject] NavigationManager Navigation { get; set; } = default!;
+}

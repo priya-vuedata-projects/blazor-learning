@@ -1,0 +1,14 @@
+﻿
+<div class="card p-3 mb-3 shadow-sm">
+    <h5>@User.Name</h5>
+    <p><b>Email:</b> @User.Email</p>
+    <p><b>Role:</b> @User.Role</p>
+    <button class="btn btn-outline-primary" @onclick="() => OnViewDetails?.Invoke(User.Id)">
+        View Details
+    </button>
+</div>
+
+@code {
+    [Parameter] public User User { get; set; } = new();
+    [Parameter] public Action<int>? OnViewDetails { get; set; }
+}

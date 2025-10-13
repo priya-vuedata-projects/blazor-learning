@@ -1,0 +1,62 @@
+﻿@page "/departments"
+@using BlazorAppServer.Models
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<BlazorAppServer.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Departments</PageTitle>
+
+<h1>Departments</h1>
+
+<p>
+    <a class="btn btn-primary" href="/departments/create">Create New Department</a>
+</p>
+
+@if (departments == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (departments.Count == 0)
+{
+    <p><em>No departments found.</em></p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dept in departments)
+            {
+                <tr>
+                    <td>@dept.Id</td>
+                    <td>@dept.Name</td>
+                    <td>@dept.Description</td>
+                    <td>
+                        <a class="btn btn-sm btn-primary me-2" href="/departments/edit?id=@dept.Id">Edit</a>
+                        <a class="btn btn-sm btn-danger" href="/departments/delete?id=@dept.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Department>? departments;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        departments = await context.Departments
+            .OrderBy(d => d.Name)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+}

@@ -1,0 +1,42 @@
+﻿@page "/userdetails/{UserId:int}"
+@rendermode InteractiveServer
+
+<PageTitle>User Details</PageTitle>
+
+<h3>User Details</h3>
+
+@if (selectedUser is null)
+{
+    <p>User not found.</p>
+}
+else
+{
+    <div class="border rounded p-3">
+        <p><b>Name:</b> @selectedUser.Name</p>
+        <p><b>Email:</b> @selectedUser.Email</p>
+        <p><b>Role:</b> @selectedUser.Role</p>
+    </div>
+
+    <button class="btn btn-secondary mt-2" @onclick="GoBack">Back to Users</button>
+}
+
+@code {
+    [Parameter] public int UserId { get; set; }
+    private User? selectedUser;
+
+    private List<User> users = new()
+    {
+        new() { Id = 1, Name = "Priya M", Email = "priya@example.com", Role = "Admin" },
+        new() { Id = 2, Name = "Rahul N", Email = "rahul@example.com", Role = "Editor" },
+        new() { Id = 3, Name = "Ananya K", Email = "ananya@example.com", Role = "Viewer" }
+    };
+
+    protected override void OnInitialized()
+    {
+        selectedUser = users.FirstOrDefault(u => u.Id == UserId);
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/users");
+
+    [Inject] NavigationManager Navigation { get; set; } = default!;
+}
