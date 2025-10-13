@@ -9,10 +9,10 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Index</h1>
+<h1>Products Index</h1>
 
 <p>
-    <a href="products/create">Create New</a>
+    <a class="btn btn-primary" href="products/create">Create New</a>
 </p>
 
 <QuickGrid Class="table" Items="context.Products">
@@ -23,9 +23,9 @@
     <PropertyColumn Property="product => product.CreatedAt" />
 
     <TemplateColumn Context="product">
-        <a href="@($"products/edit?id={product.Id}")">Edit</a> |
-        <a href="@($"products/details?id={product.Id}")">Details</a> |
-        <a href="@($"products/delete?id={product.Id}")">Delete</a>
+        <a class="btn btn-sm btn-primary" href="@($" products /edit?id ={product.Id}")">Edit</a> |
+        <a class="btn btn-outline-info" href="@($"products/details?id={product.Id}")">Details</a> |
+        <a class="btn btn-sm btn-danger" href="@($"products/delete?id={product.Id}")">Delete</a>
     </TemplateColumn>
 </QuickGrid>
 
