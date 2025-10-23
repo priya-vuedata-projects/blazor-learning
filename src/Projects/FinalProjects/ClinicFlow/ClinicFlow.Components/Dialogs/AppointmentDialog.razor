@@ -1,0 +1,52 @@
+﻿@using ClinicFlow.Shared.Models
+@using MudBlazor
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+        <MudSelect @bind-Value="Appointment.PatientId" Label="Patient">
+            @foreach (var p in Patients)
+            {
+                <MudSelectItem Value="@p.Id">@p.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect @bind-Value="Appointment.DoctorId" Label="Doctor">
+            @foreach (var d in Doctors)
+            {
+                <MudSelectItem Value="@d.Id">@d.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <MudDatePicker @bind-Date="appointmentDate" Label="Appointment Date" />
+        <MudTimePicker @bind-Time="appointmentTime" Label="Appointment Time" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public Appointment Appointment { get; set; } = new Appointment();
+    [Parameter] public List<Patient> Patients { get; set; } = new();
+    [Parameter] public List<Doctor> Doctors { get; set; } = new();
+
+    void Cancel() => MudDialog.Cancel();
+
+    private DateTime? appointmentDate;
+    private TimeSpan? appointmentTime;
+
+    protected override void OnInitialized()
+    {
+        appointmentDate = Appointment?.DateTime.Date;
+        appointmentTime = Appointment?.DateTime.TimeOfDay;
+    }
+
+    void Save()
+    {
+        if (appointmentDate.HasValue && appointmentTime.HasValue)
+            Appointment.DateTime = appointmentDate.Value.Add(appointmentTime.Value);
+
+        MudDialog?.Close(DialogResult.Ok(Appointment));
+    }
+}

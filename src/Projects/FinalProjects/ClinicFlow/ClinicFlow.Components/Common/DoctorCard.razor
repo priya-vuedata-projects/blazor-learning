@@ -1,0 +1,35 @@
+﻿@using MudBlazor
+@using ClinicFlow.Shared.Models
+
+<MudCard Class="pa-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+         Style=@($"background-color:{BackgroundColor}; color:{TextColor}; border:1px solid #e2e8f0;")>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.h6" Class="font-weight-bold">@Doctor.Name</MudText>
+        <MudText Typo="Typo.subtitle2" Color="Color.Primary">@Doctor.Specialty</MudText>
+        <MudText Typo="Typo.body2" Class="mt-1">@Doctor.Contact</MudText>
+
+        <MudDivider Class="my-2" />
+
+        <MudStack Direction="Row" Justify="Justify.FlexEnd" Spacing="1">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           OnClick="@(() => OnEdit.InvokeAsync(Doctor))"
+                           Title="Edit" />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Size="Size.Small"
+                           OnClick="@(() => OnDelete.InvokeAsync(Doctor.Id))"
+                           Title="Delete" />
+        </MudStack>
+    </MudStack>
+</MudCard>
+
+@code {
+    [Parameter] public Doctor Doctor { get; set; } = new();
+    [Parameter] public EventCallback<Doctor> OnEdit { get; set; }
+    [Parameter] public EventCallback<int> OnDelete { get; set; }
+
+    [Parameter] public string BackgroundColor { get; set; } = "#f8fafc";
+    [Parameter] public string TextColor { get; set; } = "#1e293b";
+}

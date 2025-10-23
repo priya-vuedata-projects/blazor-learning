@@ -1,0 +1,23 @@
+﻿@using ClinicFlow.Shared.Models
+@using MudBlazor
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Doctor.Name" Label="Name" Required="true" />
+        <MudTextField @bind-Value="Doctor.Specialty" Label="Specialty" />
+        <MudTextField @bind-Value="Doctor.Contact" Label="Contact" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public Doctor Doctor { get; set; } = new Doctor();
+
+    void Save() => MudDialog.Close(DialogResult.Ok(Doctor));
+    void Cancel() => MudDialog.Cancel();
+}

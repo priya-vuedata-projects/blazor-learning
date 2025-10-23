@@ -1,0 +1,27 @@
+﻿@using ClinicFlow.Shared.Models
+@using MudBlazor
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Patient.Name" Label="Name" Required="true" />
+        <MudNumericField @bind-Value="Patient.Age" Label="Age" />
+        <MudTextField @bind-Value="Patient.Contact" Label="Contact" />
+        <MudSelect @bind-Value="Patient.Gender" Label="Gender">
+            <MudSelectItem Value="Patient.Gender">Male</MudSelectItem>
+            <MudSelectItem Value="Patient.Gender">Female</MudSelectItem>
+        </MudSelect>
+
+        <MudTextField @bind-Value="Patient.Address" Label="Address" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public Patient Patient { get; set; } = new Patient();
+
+    void Save() => MudDialog.Close(DialogResult.Ok(Patient));
+    void Cancel() => MudDialog.Cancel();
+}

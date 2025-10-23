@@ -1,0 +1,123 @@
+﻿@page "/dashboard"
+@attribute [Authorize]
+@inject IPatientService PatientService
+@inject IDoctorService DoctorService
+@inject IAppointmentService AppointmentService
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+@using ClinicFlow.Shared.Models
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.SignalR.Client
+
+<PageTitle>Dashboard</PageTitle>
+
+<MudStack Spacing="4" Class="pa-6">
+
+    <!-- Summary Cards -->
+    <MudGrid Gutter="3">
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="pa-4 rounded-xl shadow-md text-center" Style="background-color:#f0f9ff;">
+                <MudText Typo="Typo.subtitle1" Color="Color.Primary" Class="font-weight-bold">Total Patients</MudText>
+                <MudText Typo="Typo.h4" Color="Color.Primary">@patients.Count</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="pa-4 rounded-xl shadow-md text-center" Style="background-color:#f0fff4;">
+                <MudText Typo="Typo.subtitle1" Color="Color.Success" Class="font-weight-bold">Total Doctors</MudText>
+                <MudText Typo="Typo.h4" Color="Color.Success">@doctors.Count</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="pa-4 rounded-xl shadow-md text-center" Style="background-color:#fff7f0;">
+                <MudText Typo="Typo.subtitle1" Color="Color.Error" Class="font-weight-bold">Today's Appointments</MudText>
+                <MudText Typo="Typo.h4" Color="Color.Error">@todayAppointments.Count</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <!-- Table: Today's Appointments -->
+    <MudPaper Class="pa-4 rounded-xl shadow-md">
+        <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-3 font-weight-bold">Today's Appointments</MudText>
+
+        <MudTable Items="todayAppointments" Hover="true" Bordered="true" Striped="true" Dense="true" Class="rounded-lg table-full-border">
+            <HeaderContent>
+                <MudTh><MudText Typo="Typo.subtitle2" Class="font-weight-bold">Patient</MudText></MudTh>
+                <MudTh><MudText Typo="Typo.subtitle2" Class="font-weight-bold">Doctor</MudText></MudTh>
+                <MudTh><MudText Typo="Typo.subtitle2" Class="font-weight-bold">Time</MudText></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd Class="py-2 px-3">@context.Patient?.Name</MudTd>
+                <MudTd Class="py-2 px-3">@context.Doctor?.Name</MudTd>
+                <MudTd Class="py-2 px-3">@context.DateTime.ToString("t")</MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText Typo="Typo.subtitle1" Align="Align.Center" Color="Color.Secondary" Class="my-4">
+                    No appointments today.
+                </MudText>
+            </NoRecordsContent>
+        </MudTable>
+    </MudPaper>
+</MudStack>
+
+<style>
+    .table-full-border table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .table-full-border th, .table-full-border td {
+        border: 1px solid #d3d3d3 !important;
+        padding: 8px;
+    }
+
+    .table-full-border th {
+        background-color: #e9eff5;
+    }
+
+    .table-full-border tr:hover td {
+        background-color: #f1f6ff;
+        transition: background-color 0.2s ease;
+    }
+</style>
+
+@code {
+    private List<Patient> patients = new();
+    private List<Doctor> doctors = new();
+    private List<Appointment> todayAppointments = new();
+
+    //private HubConnection hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initial load
+        patients = await PatientService.GetAllAsync();
+        doctors = await DoctorService.GetAllAsync();
+        var allAppointments = await AppointmentService.GetAllAsync();
+        todayAppointments = allAppointments.Where(a => a.DateTime.Date == DateTime.Today).ToList();
+
+        // Setup SignalR connection
+        // hubConnection = new HubConnectionBuilder()
+        //     .WithUrl(NavigationManager.ToAbsoluteUri("/clinichub"))
+        //     .WithAutomaticReconnect()
+        //     .Build();
+
+        // hubConnection.On<string>("ReceiveDashboardUpdate", async (message) =>
+        // {
+        //     Re-fetch data when update received
+        //     patients = await PatientService.GetAllAsync();
+        //     doctors = await DoctorService.GetAllAsync();
+        //     var allAppointments = await AppointmentService.GetAllAsync();
+        //     todayAppointments = allAppointments.Where(a => a.DateTime.Date == DateTime.Today).ToList();
+        //     StateHasChanged();
+        // });
+
+        // await hubConnection.StartAsync();
+    }
+
+    // public async ValueTask DisposeAsync()
+    // {
+    //     if (hubConnection is not null)
+    //         await hubConnection.DisposeAsync();
+    // }
+}

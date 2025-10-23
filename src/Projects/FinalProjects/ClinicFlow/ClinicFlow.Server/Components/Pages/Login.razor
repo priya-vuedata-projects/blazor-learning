@@ -1,0 +1,135 @@
+﻿@page "/"
+@page "/login"
+@using ClinicFlow.Server.Data
+@using ClinicFlow.Shared.Models
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+<div class="login-container">
+    <div class="login-card">
+        <h2>Login</h2>
+
+        <EditForm EditContext="editContext" OnValidSubmit="HandleLogin" FormName="LoginForm">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label>Email</label>
+                <InputText @bind-Value="loginModel.Email" class="form-control" placeholder="Enter your email" />
+            </div>
+            <ValidationMessage For="@(() => loginModel.Email)" />
+
+            <div class="form-group">
+                <label>Password</label>
+                <InputText @bind-Value="loginModel.Password" type="password" class="form-control" placeholder="Enter your password" />
+            </div>
+            
+            <ValidationMessage For="@(() => loginModel.Password)" />
+
+
+            <button type="submit" class="login-button">Login</button>
+        </EditForm>
+    </div>
+</div>
+
+<style>
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f4f8;
+    }
+
+    .login-card {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        width: 350px;
+        text-align: center;
+    }
+
+        .login-card h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+    .form-group {
+        margin-bottom: 1rem;
+        text-align: left;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+
+    .login-button {
+        width: 100%;
+        padding: 0.7rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 1rem;
+    }
+
+        .login-button:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+@code {
+    private EditContext editContext;
+    private LoginModel loginModel = new()
+    {
+        Email = "admin@clinicflow.com",
+        Password = "Admin@123",
+    };
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(loginModel);
+    }
+
+    private async Task HandleLogin()
+    {
+        if (!editContext.Validate())
+        {
+            return;
+        }
+
+        var user = await UserManager.FindByEmailAsync(loginModel.Email);
+        if (user == null)
+        {
+            await JS.InvokeVoidAsync("alert", "Invalid email or password.");
+            return;
+        }
+
+        var result = await SignInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
+
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("/dashboard", true);
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Invalid email or password.");
+        }
+    }
+
+}

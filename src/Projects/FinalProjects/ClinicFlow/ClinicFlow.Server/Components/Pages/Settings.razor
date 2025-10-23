@@ -1,0 +1,43 @@
+﻿@page "/settings"
+@using MudBlazor
+@rendermode InteractiveServer
+
+<PageTitle>Settings</PageTitle>
+
+<MudStack Spacing="4" Class="pa-6">
+
+    <MudText Typo="Typo.h5" Class="mb-3">Settings</MudText>
+
+    <!-- Theme Selection -->
+    <MudPaper Class="pa-4 rounded-xl shadow-md">
+        <MudText Typo="Typo.subtitle1" Class="mb-2 font-weight-bold">Theme</MudText>
+        <MudRadioGroup T="string" @bind-SelectedOption="_selectedTheme">
+            <MudRadio T="string" Option="Light" Label="Light Theme" />
+            <MudRadio T="string" Option="Dark" Label="Dark Theme" />
+        </MudRadioGroup>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="ApplyTheme">
+            Apply Theme
+        </MudButton>
+    </MudPaper>
+
+    <!-- Other Options -->
+    <MudPaper Class="pa-4 rounded-xl shadow-md">
+        <MudText Typo="Typo.subtitle1" Class="mb-2 font-weight-bold">Preferences</MudText>
+
+        <MudSwitch T="bool" @bind-Checked="_enableNotifications" Label="Enable Notifications" />
+        <MudSwitch T="bool" @bind-Checked="_compactMode" Label="Compact Mode" />
+    </MudPaper>
+
+</MudStack>
+
+@code {
+    private string _selectedTheme = "Light";
+    private bool _enableNotifications = true;
+    private bool _compactMode = false;
+
+    private void ApplyTheme()
+    {
+        // Example: You can call your theme service here
+        Console.WriteLine($"Theme changed to: {_selectedTheme}");
+    }
+}
